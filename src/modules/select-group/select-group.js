@@ -1,35 +1,36 @@
 class SelectGroup {
-  constructor (values = [], list = [], option = {}) {
+  constructor (values = [], list = [], update = () => {}, option = {}) {
     this.log('SelectGroup start initing')
     this.values = values
     this.list = list
+    this.update = update
     this.option = Object.assign({
-      hasConsole: false
+      hasConsole: true
     }, option)
     this.$list = this.getInfoList(values, list)
   }
   set values (values) {
-    console.log(values)
     this._values = values
   }
   get values () {
     return this._values
   }
-
   /**
    * select组设置设置
    * @param values
    * @param list
    * @param option
    */
-  set (values = [], list = [], option = {}) {
+  set (values = [], list = [], update = () => {}, option = {}) {
     this.log('SelectGroup start seting')
     this.values = values
     this.list = list
+    this.update = update
     this.option = Object.assign({
       hasConsole: false
     }, option)
     this.$list = this.getInfoList(values, list)
+    this.update(this.values, this.$list)
   }
   /**
    * 对象深复制
@@ -58,34 +59,29 @@ class SelectGroup {
           change: (data) => {
             this.values[i] = data
             this.$list[i].value = data
-            console.log(this.$list)
             this.$list.forEach((item, index) => {
-              if (index === 0) {
-                console.log('first', item)
-              }
               item.list = this.listFilter(item.value, this.list)
             })
+            this.update(this.values, this.$list)
           }
         })
       }
     }
-    console.log('$list:', tempList)
+    console.log(tempList)
     return tempList
   }
   listFilter (selectItem, list) {
     let outputList = this.clone(list).filter(item => {
-      if (!selectItem || item.value === selectItem) {
-        console.log('1:', selectItem)
+      if (item.value === selectItem) {
         return true
-      } else if (this.values.includes(selectItem)) {
-        console.log('2:', selectItem)
+      } else if (this.values.includes(item.value)) {
         return false
+      } else if (!selectItem) {
+        return true
       } else {
-        console.log('3:', selectItem)
         return true
       }
     })
-    console.log(outputList)
     return outputList
   }
   /**

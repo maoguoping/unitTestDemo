@@ -1,18 +1,18 @@
 <template>
   <div class="test">
     <div>
-        <el-select v-model="valueOne" placeholder="请选择" @change="groupOne.$list[0].change">
-          <el-option
-            v-for="item in listOne"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled">
-          </el-option>
-        </el-select>
-      <el-select v-model="valueTwo" placeholder="请选择" @change="groupOne.$list[1].change">
+      <el-select :value = "selectList[0]"  placeholder="请选择" @change="groupOne.$list[0].change" >
         <el-option
-          v-for="item in listTwo"
+          v-for="item in singleList[0].list"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.disabled">
+        </el-option>
+      </el-select>
+      <el-select :value = "selectList[1]"  placeholder="请选择" @change="groupOne.$list[1].change" >
+        <el-option
+          v-for="item in singleList[1].list"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -27,38 +27,58 @@
 import SelectGroup from '../modules/select-group/select-group'
 export default {
   name: 'Test',
+  props: {
+    values: {
+      type: Array,
+      default: () => {
+        return ['', '']
+      }
+    },
+    typeList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
   data () {
-    let groupOne = new SelectGroup(['', ''], [], {
-    })
+    // let selectList = ['', '']
+    // let list = [{
+    //   value: 'fps',
+    //   label: '第三人称射击',
+    //   disabled: false
+    // }, {
+    //   value: 'rpg',
+    //   label: '角色扮演',
+    //   disabled: false
+    // }, {
+    //   value: 'rts',
+    //   label: '即时战略',
+    //   disabled: false
+    // }, {
+    //   value: 'act',
+    //   label: '动作',
+    //   disabled: false
+    // }]
+    let selectList = this.values
+    let list = this.typeList
+    let groupOne = new SelectGroup(selectList, list, (values, list) => {
+      console.log('update')
+      this.singleList = list
+      this.selectList = values
+    }, {})
     return {
-      valueOne: '',
-      valueTwo: '',
-      listOne: [],
-      listTwo: [],
+      selectList,
+      list,
+      singleList: groupOne.$list,
       groupOne: groupOne
     }
+  },
+  computed: {
   },
   created () {
   },
   mounted () {
-    this.list = [{
-      value: 'fps',
-      label: '第三人称射击'
-    }, {
-      value: 'rpg',
-      label: '角色扮演'
-    }, {
-      value: 'rts',
-      label: '即时战略'
-    }, {
-      value: 'act',
-      label: '动作'
-    }]
-    this.groupOne.set([this.valueOne, this.valueTwo], this.list, {
-    })
-    this.listOne = this.groupOne.$list[0].list
-    this.listTwo = this.groupOne.$list[1].list
-    console.log(this.listOne)
   },
   methods: {
   }
